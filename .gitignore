@@ -1,0 +1,5 @@
+[Bb]uild
+nbproject
+rpmbuild
+.vscode
+CMakeLists.txt.user
