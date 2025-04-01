@@ -3,6 +3,7 @@
 
 #include <cstring>
 #include <iterator>
+#include <vector>
 #include <string>
 #include <type_traits>
 
@@ -75,8 +76,7 @@ T get(InputIt& possition, InputIt last, typename std::iterator_traits<InputIt>::
         throw EndOfBuffer();
     }
 
-    size_t size = strnlen(reinterpret_cast<const char*>(possition), len);
-    T value(possition, possition + size);
+    T value(possition, possition + len);
     possition += len;
     return value;
 }
