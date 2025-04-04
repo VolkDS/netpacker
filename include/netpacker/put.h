@@ -17,7 +17,16 @@ template <typename OutputIt,
           typename std::enable_if_t<std::is_arithmetic<T>::value, bool> = true>
 OutputIt put(OutputIt possition, OutputIt last, const T& value)
 {
-    using unsigned_t = typename std::make_unsigned<T>::type;
+    // TODO: fix for width floating-point types (since C++23)
+    // float16_t, float32_t, float64_t, float128_t, bfloat16_t
+    using unsigned_t = typename std::conditional<
+            std::is_integral<T>::value,
+            std::make_unsigned<T>,
+            std::conditional<
+                std::is_same<T, float>::value,
+                std::common_type<uint32_t>::type,
+                std::common_type<uint64_t>::type
+            >>::type::type;
     unsigned_t nval = 0;
 
     if (std::distance(possition, last) < static_cast<std::ptrdiff_t>(sizeof(T))) {
@@ -46,7 +55,16 @@ OutputIt put(OutputIt possition, OutputIt last, const T& value, size_t len)
         return put(possition, last, value);
     }
 
-    using unsigned_t = typename std::make_unsigned<T>::type;
+    // TODO: fix for width floating-point types (since C++23)
+    // float16_t, float32_t, float64_t, float128_t, bfloat16_t
+    using unsigned_t = typename std::conditional<
+            std::is_integral<T>::value,
+            std::make_unsigned<T>,
+            std::conditional<
+                std::is_same<T, float>::value,
+                std::common_type<uint32_t>::type,
+                std::common_type<uint64_t>::type
+            >>::type::type;
     unsigned_t nval = 0;
 
     if (std::distance(possition, last) < static_cast<std::ptrdiff_t>(len)) {
