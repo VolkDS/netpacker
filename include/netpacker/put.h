@@ -86,6 +86,19 @@ OutputIt put(OutputIt possition, OutputIt last, const T& value, size_t len)
 
 template <typename OutputIt,
           typename T,
+          typename std::enable_if_t<std::is_same<T, std::string>::value, bool> = true>
+OutputIt put(OutputIt possition, OutputIt last, const T& value)
+{
+    if (std::distance(possition, last) < static_cast<std::ptrdiff_t>(value.size())) {
+        throw BufferOverflow();
+    }
+
+    std::copy(value.begin(), value.end(), possition);
+    return possition + static_cast<std::ptrdiff_t>(value.size());
+}
+
+template <typename OutputIt,
+          typename T,
           typename std::enable_if_t<std::is_same<T, std::vector<uint8_t>>::value, bool> = true>
 OutputIt put(OutputIt possition, OutputIt last, const T& value)
 {
