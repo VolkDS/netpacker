@@ -37,7 +37,7 @@ OutputIt put(OutputIt possition, OutputIt last, const T& value)
         nval = host_to_network(value);
     }
     else {
-        nval = host_to_network(static_cast<unsigned_t>(value));
+        nval = host_to_network(reinterpret_cast<const unsigned_t&>(value));
     }
 
     const auto* begin = reinterpret_cast<const uint8_t*>(&nval);
@@ -75,7 +75,7 @@ OutputIt put(OutputIt possition, OutputIt last, const T& value, size_t len)
         nval = host_to_network(value);
     }
     else {
-        nval = host_to_network(static_cast<unsigned_t>(value));
+        nval = host_to_network(reinterpret_cast<const unsigned_t&>(value));
     }
 
     const auto* begin = reinterpret_cast<const uint8_t*>(&nval) + sizeof(nval) - len;

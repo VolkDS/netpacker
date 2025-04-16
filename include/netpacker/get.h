@@ -19,7 +19,16 @@ template <typename T,
           typename std::enable_if_t<std::is_arithmetic<T>::value, bool> = true>
 T get(InputIt& possition, InputIt last)
 {
-    using unsigned_t = typename std::make_unsigned<T>::type;
+    // TODO: fix for width floating-point types (since C++23)
+    // float16_t, float32_t, float64_t, float128_t, bfloat16_t
+    using unsigned_t = typename std::conditional<
+            std::is_integral<T>::value,
+            std::make_unsigned<T>,
+            std::conditional<
+                std::is_same<T, float>::value,
+                std::common_type<uint32_t>::type,
+                std::common_type<uint64_t>::type
+            >>::type::type;
     unsigned_t value = 0;
 
     if (std::distance(possition, last) < static_cast<std::ptrdiff_t>(sizeof(T))) {
@@ -34,7 +43,7 @@ T get(InputIt& possition, InputIt last)
         return nval;
     }
     else {
-        return static_cast<T>(nval);
+        return reinterpret_cast<T&>(nval);
     }
 }
 
@@ -47,7 +56,16 @@ T get(InputIt& possition, InputIt last, typename std::iterator_traits<InputIt>::
         return get<T>(possition, last);
     }
 
-    using unsigned_t = typename std::make_unsigned<T>::type;
+    // TODO: fix for width floating-point types (since C++23)
+    // float16_t, float32_t, float64_t, float128_t, bfloat16_t
+    using unsigned_t = typename std::conditional<
+            std::is_integral<T>::value,
+            std::make_unsigned<T>,
+            std::conditional<
+                std::is_same<T, float>::value,
+                std::common_type<uint32_t>::type,
+                std::common_type<uint64_t>::type
+            >>::type::type;
     unsigned_t value = 0;
 
     if (std::distance(possition, last) < len) {
@@ -63,7 +81,7 @@ T get(InputIt& possition, InputIt last, typename std::iterator_traits<InputIt>::
         return nval;
     }
     else {
-        return static_cast<T>(nval);
+        return reinterpret_cast<T&>(nval);
     }
 }
 
